@@ -7,7 +7,12 @@ async function bootstrap() {
   app.enableShutdownHooks();
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://localhost:4173', 'https://remostar.vercel.app'],
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:4173',
+      'https://remostar.vercel.app',
+      'https://aanddi-remostar-frontend-13b3.twc1.net',
+    ],
   });
 
   await app.listen(5000);
