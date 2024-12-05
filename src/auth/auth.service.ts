@@ -109,6 +109,8 @@ export class AuthService {
       },
     });
 
+    console.log(role);
+
     const roleEmployee = await this.prisma.employeesRoles.findUnique({
       where: {
         name: RolesEmployee.Admin,

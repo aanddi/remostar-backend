@@ -63,12 +63,13 @@ model Contractors {
   email          String?
   cite           String?
   inn            String  @unique
-  descCompany    String? @map("desc_company") @db.VarChar(500)
+  descCompany    String? @map("desc_company") @db.VarChar(5000)
   tags           String?
 
-  employee ContractorsEmployees[]
-  reviews  ContractorsReviews[]
-  services ContractorsServices[]
+  employee             ContractorsEmployees[]
+  reviews              ContractorsReviews[]
+  services             ContractorsServices[]
+  ContarctorsPortfolio ContarctorsPortfolio[]
 
   @@map("contractors")
 }
@@ -95,24 +96,47 @@ model ContractorsReviews {
 
   contractorsId Int    @map("contractors_id")
   userId        String @map("user_id")
-  // galleryId
 
-  typeWork           String @map("type_work")
-  gradeTotal         Int    @map("grade_total")
-  gradeQuality       Int    @map("grade_quality")
-  gradeMaterials     Int    @map("grade_materials")
-  gradePrice         Int    @map("grade_price")
-  gradeExperience    Int    @map("grade_experience")
-  gradeDeadlines     Int    @map("grade_deadlines")
-  gradeCommunication Int    @map("grade_communication")
-  descDignity        String @map("desc_dignity")
-  descFlaws          String @map("desc_flaws")
-  descReview         String @map("desc_review")
+  typeWork           String   @map("type_work")
+  gradeTotal         Int      @map("grade_total")
+  gradeQuality       Int      @map("grade_quality")
+  gradeMaterials     Int      @map("grade_materials")
+  gradePrice         Int      @map("grade_price")
+  gradeExperience    Int      @map("grade_experience")
+  gradeDeadlines     Int      @map("grade_deadlines")
+  gradeCommunication Int      @map("grade_communication")
+  descDignity        String   @map("desc_dignity")
+  descFlaws          String   @map("desc_flaws")
+  descReview         String   @map("desc_review")
+  images             String?
 
   Contractors Contractors? @relation(fields: [contractorsId], references: [id])
   Users       Users?       @relation(fields: [userId], references: [id])
 
   @@map("contractors_reviews")
+}
+
+model ContarctorsPortfolio {
+  id        Int      @id @default(autoincrement()) @map("review_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt @map("update_at")
+
+  contractorsId Int @map("contractors_id")
+
+  name     String
+  type     String
+  rooms    Int
+  category String
+  footage  Int
+  budget   Int
+  time     String
+  desc     String
+  gallery  String?
+  author   String
+
+  Contractors Contractors? @relation(fields: [contractorsId], references: [id])
+
+  @@map("contractors_portfolio")
 }
 
 model ContractorsEmployees {

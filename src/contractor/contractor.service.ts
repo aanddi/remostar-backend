@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { ContractorsReviews } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { IReviewStatistics } from './type/contractor.interface';
 
 @Injectable()
 export class ContractorService {
@@ -117,4 +119,92 @@ export class ContractorService {
 
     return contractors;
   }
+
+  async getContractorById(contractorId: number) {
+    const contractorInfo = await this.prisma.contractors.findUnique({
+      where: {
+        id: contractorId,
+      },
+    });
+
+    const contractorService = await this.prisma.contractorsServices.findMany({
+      where: {
+        contractorsId: contractorId,
+      },
+    });
+
+    const contractorReviews = await this.prisma.contractorsReviews.findMany({
+      where: {
+        contractorsId: contractorId,
+      },
+    });
+
+    const contractorPortfolio = await this.prisma.contarctorsPortfolio.findMany({
+      where: {
+        contractorsId: contractorId,
+      },
+    });
+
+    const statisticsReviews = this.calculateAverageReviewScores(contractorReviews);
+
+    return {
+      info: contractorInfo,
+      services: contractorService,
+      reviews: {
+        statistics: statisticsReviews,
+        items: contractorReviews,
+      },
+      portfolio: contractorPortfolio,
+    };
+  }
+
+  private calculateAverageReviewScores = (reviews: ContractorsReviews[]): IReviewStatistics => {
+    if (!reviews || reviews.length === 0) {
+      return {
+        gradeTotal: 0,
+        gradeQuality: 0,
+        gradeMaterials: 0,
+        gradePrice: 0,
+        gradeExperience: 0,
+        gradeDeadlines: 0,
+        gradeCommunication: 0,
+      };
+    }
+
+    const sums = reviews.reduce(
+      (acc, review) => {
+        return {
+          gradeTotal: acc.gradeTotal + review.gradeTotal,
+          gradeQuality: acc.gradeQuality + review.gradeQuality,
+          gradeMaterials: acc.gradeMaterials + review.gradeMaterials,
+          gradePrice: acc.gradePrice + review.gradePrice,
+          gradeExperience: acc.gradeExperience + review.gradeExperience,
+          gradeDeadlines: acc.gradeDeadlines + review.gradeDeadlines,
+          gradeCommunication: acc.gradeCommunication + review.gradeCommunication,
+        };
+      },
+      {
+        gradeTotal: 0,
+        gradeQuality: 0,
+        gradeMaterials: 0,
+        gradePrice: 0,
+        gradeExperience: 0,
+        gradeDeadlines: 0,
+        gradeCommunication: 0,
+      },
+    );
+
+    const count = reviews.length;
+    const averages = {
+      gradeTotal: sums.gradeTotal / count,
+      gradeQuality: sums.gradeQuality / count,
+      gradeMaterials: sums.gradeMaterials / count,
+      gradePrice: sums.gradePrice / count,
+      gradeExperience: sums.gradeExperience / count,
+      gradeDeadlines: sums.gradeDeadlines / count,
+      gradeCommunication: sums.gradeCommunication / count,
+    };
+
+    return averages;
+  };
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ContractorService } from './contractor.service';
 
 @Controller('contractor')
@@ -28,5 +28,10 @@ export class ContractorController {
     @Query('field') field: string,
   ) {
     return this.contractorService.getSuggestSearch(field, region, type, veryfi, tags);
+  }
+
+  @Get('/:id')
+  async getContractorById(@Param('id') contractorId: string) {
+    return this.contractorService.getContractorById(+contractorId);
   }
 }

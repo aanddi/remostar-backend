@@ -9,3 +9,13 @@ export interface IRibbonQuery {
   sortRating: string;
   sortSize: string;
 }
+
+export interface IReviewStatistics {
+  gradeTotal: number;
+  gradeQuality: number;
+  gradeMaterials: number;
+  gradePrice: number;
+  gradeExperience: number;
+  gradeDeadlines: number;
+  gradeCommunication: number;
+}
