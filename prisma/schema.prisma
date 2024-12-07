@@ -31,6 +31,7 @@ model Users {
 
   employee           ContractorsEmployees?
   ContractorsReviews ContractorsReviews[]
+  tenders            Tenders[]
 
   @@map("users")
 }
@@ -97,17 +98,17 @@ model ContractorsReviews {
   contractorsId Int    @map("contractors_id")
   userId        String @map("user_id")
 
-  typeWork           String   @map("type_work")
-  gradeTotal         Int      @map("grade_total")
-  gradeQuality       Int      @map("grade_quality")
-  gradeMaterials     Int      @map("grade_materials")
-  gradePrice         Int      @map("grade_price")
-  gradeExperience    Int      @map("grade_experience")
-  gradeDeadlines     Int      @map("grade_deadlines")
-  gradeCommunication Int      @map("grade_communication")
-  descDignity        String   @map("desc_dignity")
-  descFlaws          String   @map("desc_flaws")
-  descReview         String   @map("desc_review")
+  typeWork           String  @map("type_work")
+  gradeTotal         Int     @map("grade_total")
+  gradeQuality       Int     @map("grade_quality")
+  gradeMaterials     Int     @map("grade_materials")
+  gradePrice         Int     @map("grade_price")
+  gradeExperience    Int     @map("grade_experience")
+  gradeDeadlines     Int     @map("grade_deadlines")
+  gradeCommunication Int     @map("grade_communication")
+  descDignity        String  @map("desc_dignity")
+  descFlaws          String  @map("desc_flaws")
+  descReview         String  @map("desc_review")
   images             String?
 
   Contractors Contractors? @relation(fields: [contractorsId], references: [id])
@@ -164,4 +165,29 @@ model EmployeesRoles {
   ContractorsEmployees ContractorsEmployees[]
 
   @@map("employees_roles")
+}
+
+model Tenders {
+  id        Int      @id @default(autoincrement()) @map("tender_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt @map("update_at")
+
+  user   Users  @relation(fields: [userId], references: [id])
+  userId String
+
+  name          String
+  budget        Int
+  address       String
+  desc          String
+  gallery       String
+  tags          String
+  rooms         Int
+  type          String
+  footage       Int
+  squareKitchen Int    @map("square_kitchen")
+  squareLived   Int    @map("square_lived")
+  floor         String
+  finishing     String
+
+  @@map("tenders")
 }

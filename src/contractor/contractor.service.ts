@@ -9,7 +9,7 @@ export class ContractorService {
 
   async getContractorList(
     page = 1,
-    perPage = 10,
+    perPage = 5,
     region: string,
     type?: string,
     veryfi?: string,
@@ -20,7 +20,7 @@ export class ContractorService {
     const filters: any = {
       name: { contains: search },
       typeCompany: { contains: type },
-      citys: { contains: region === 'Россия' ? undefined : region },
+      mainCity: { contains: region },
       tags: { contains: tags },
     };
 
