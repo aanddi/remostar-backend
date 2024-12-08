@@ -180,7 +180,6 @@ model Tenders {
   address       String
   desc          String
   gallery       String
-  tags          String
   rooms         Int
   type          String
   footage       Int
