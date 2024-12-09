@@ -32,6 +32,7 @@ model Users {
   employee           ContractorsEmployees?
   ContractorsReviews ContractorsReviews[]
   tenders            Tenders[]
+  objects            Objects[]
 
   @@map("users")
 }
@@ -71,6 +72,7 @@ model Contractors {
   reviews              ContractorsReviews[]
   services             ContractorsServices[]
   ContarctorsPortfolio ContarctorsPortfolio[]
+  objects              Objects[]
 
   @@map("contractors")
 }
@@ -189,4 +191,69 @@ model Tenders {
   finishing     String
 
   @@map("tenders")
+}
+
+model Objects {
+  id        Int      @id @default(autoincrement()) @map("object_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt @map("update_at")
+
+  contractor Int
+
+  name          String
+  address       String
+  status        String
+  footage       Int
+  rooms         Int
+  type          String
+  squareKitchen Int     @map("square_kitchen")
+  squareLived   Int     @map("square_lived")
+  floor         String
+  finishing     String?
+  gallery       String?
+  desc          String
+
+  Users   Users? @relation(fields: [usersId], references: [id])
+  usersId String @map("user_id")
+
+  Contractors   Contractors? @relation(fields: [contractorsId], references: [id])
+  contractorsId Int          @map("contractors_id")
+
+  files   ObjectsFiles[]
+  reports ObjectsReports[]
+
+  @@map("objects")
+}
+
+model ObjectsFiles {
+  id        Int      @id @default(autoincrement()) @map("object_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt @map("update_at")
+
+  name        String
+  size        String
+  type        String
+  blobContent Bytes  @map("blob_data")
+
+  Objects   Objects @relation(fields: [objectsId], references: [id])
+  objectsId Int     @map("objects_id")
+
+  @@map("objects_files")
+}
+
+model ObjectsReports {
+  id        Int      @id @default(autoincrement()) @map("report_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updateAt  DateTime @updatedAt @map("update_at")
+
+  step    Int
+  gallery String?
+  title   String
+  desc    String
+  result  String
+
+  Objects   Objects @relation(fields: [objectsId], references: [id])
+  objectsId Int     @map("objects_id")
+
+  @@map("objects_reports")
 }
