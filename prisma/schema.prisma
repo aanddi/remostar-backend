@@ -68,11 +68,11 @@ model Contractors {
   descCompany    String? @map("desc_company") @db.VarChar(5000)
   tags           String?
 
-  employee             ContractorsEmployees[]
-  reviews              ContractorsReviews[]
-  services             ContractorsServices[]
-  ContarctorsPortfolio ContarctorsPortfolio[]
-  objects              Objects[]
+  employee  ContractorsEmployees[]
+  reviews   ContractorsReviews[]
+  services  ContractorsServices[]
+  portfolio ContarctorsPortfolio[]
+  objects   Objects[]
 
   @@map("contractors")
 }
@@ -80,14 +80,13 @@ model Contractors {
 model ContractorsServices {
   id Int @id @default(autoincrement()) @map("employee_id")
 
-  contractorsId Int @map("contractors_id")
-
   servicesName   String @map("services_name")
   servicesDesc   String @map("services_desc")
   servicesUnit   String @map("services_unit")
   servicesSalary Int    @map("services_salary")
 
-  Contractors Contractors? @relation(fields: [contractorsId], references: [id])
+  Contractors   Contractors? @relation(fields: [contractorsId], references: [id])
+  contractorsId Int          @map("contractors_id")
 
   @@map("contractors_services")
 }

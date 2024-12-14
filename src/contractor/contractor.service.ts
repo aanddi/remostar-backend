@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ContractorsReviews } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { IReviewStatistics } from './type/contractor.interface';
+import { DtoActionPortfolio, DtoActionServices, DtoEditContractorInfo } from './dto/contractor.dto';
 
 @Injectable()
 export class ContractorService {
@@ -156,6 +157,154 @@ export class ContractorService {
       },
       portfolio: contractorPortfolio,
     };
+  }
+
+  async editContractorInfo(contractorId: number, dto: DtoEditContractorInfo) {
+    const infoEdit = await this.prisma.contractors.update({
+      where: {
+        id: contractorId,
+      },
+      data: {
+        legalName: dto.legalName,
+        name: dto.name,
+        typeCompany: dto.adress,
+        mainCity: dto.adress,
+        adress: dto.adress,
+        countEmployees: dto.countEmployees,
+        phone: dto.phone,
+        email: dto.email,
+        inn: dto.inn,
+        descCompany: dto.descCompany,
+      },
+    });
+
+    return infoEdit;
+  }
+
+  async getContractorInfo(contractorId: number) {
+    const contractor = await this.prisma.contractors.findUnique({
+      where: {
+        id: contractorId,
+      },
+      include: {
+        services: true,
+        portfolio: true,
+      },
+    });
+
+    return contractor;
+  }
+
+  async getServiceById(servicesId: number) {
+    const service = await this.prisma.contractorsServices.findUnique({
+      where: {
+        id: servicesId,
+      },
+    });
+
+    return service;
+  }
+
+  async createServices(contractorId: number, dto: DtoActionServices) {
+    const newServices = await this.prisma.contractorsServices.create({
+      data: {
+        contractorsId: contractorId,
+        servicesName: dto.servicesName,
+        servicesDesc: dto.servicesDesc,
+        servicesUnit: dto.servicesUnit,
+        servicesSalary: dto.servicesSalary,
+      },
+    });
+
+    return newServices;
+  }
+
+  async editServices(servicesId: number, dto: DtoActionServices) {
+    const editServices = await this.prisma.contractorsServices.update({
+      where: {
+        id: servicesId,
+      },
+      data: {
+        servicesName: dto.servicesName,
+        servicesDesc: dto.servicesDesc,
+        servicesUnit: dto.servicesUnit,
+        servicesSalary: dto.servicesSalary,
+      },
+    });
+
+    return editServices;
+  }
+
+  async deleteServices(servicesId: number) {
+    const deleteServices = await this.prisma.contractorsServices.delete({
+      where: {
+        id: servicesId,
+      },
+    });
+
+    return deleteServices;
+  }
+
+  async getPortfolioById(portfolioId: number) {
+    const portfolio = await this.prisma.contarctorsPortfolio.findUnique({
+      where: {
+        id: portfolioId,
+      },
+    });
+
+    return portfolio;
+  }
+
+  async createPortfolio(contractorId: number, dto: DtoActionPortfolio) {
+    const newPortfolio = await this.prisma.contarctorsPortfolio.create({
+      data: {
+        name: dto.name,
+        type: dto.type,
+        rooms: dto.rooms,
+        category: dto.category,
+        footage: dto.footage,
+        budget: dto.budget,
+        time: dto.time,
+        desc: dto.desc,
+        gallery: dto.gallery,
+        author: dto.author,
+        contractorsId: contractorId,
+      },
+    });
+
+    return newPortfolio;
+  }
+
+  async editPortfolio(portfolioId: number, dto: DtoActionPortfolio) {
+    const editPortfolio = await this.prisma.contarctorsPortfolio.update({
+      where: {
+        id: portfolioId,
+      },
+      data: {
+        name: dto.name,
+        type: dto.type,
+        rooms: dto.rooms,
+        category: dto.category,
+        footage: dto.footage,
+        budget: dto.budget,
+        time: dto.time,
+        desc: dto.desc,
+        gallery: dto.gallery,
+        author: dto.author,
+      },
+    });
+
+    return editPortfolio;
+  }
+
+  async deletePortfolio(servicesId: number) {
+    const deletePortfolio = await this.prisma.contarctorsPortfolio.delete({
+      where: {
+        id: servicesId,
+      },
+    });
+
+    return deletePortfolio;
   }
 
   private calculateAverageReviewScores = (reviews: ContractorsReviews[]): IReviewStatistics => {
