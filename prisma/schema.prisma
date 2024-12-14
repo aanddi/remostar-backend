@@ -180,7 +180,7 @@ model Tenders {
   budget        Int
   address       String
   desc          String
-  gallery       String
+  gallery       String?
   rooms         Int
   type          String
   footage       Int
