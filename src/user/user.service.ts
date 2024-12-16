@@ -30,7 +30,7 @@ export class UserService {
   }
 
   async editUser(userId: string, dto: EditUserDto) {
-    const user = this.prisma.users.update({
+    const user = await this.prisma.users.update({
       where: {
         id: userId,
       },

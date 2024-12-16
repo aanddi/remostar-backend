@@ -6,9 +6,10 @@ import { ContractorModule } from './contractor/contractor.module';
 import { TendersModule } from './tenders/tenders.module';
 import { UserModule } from './user/user.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { ObjectsModule } from './objects/objects.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, ContractorModule, TendersModule, UserModule, ReviewsModule],
+  imports: [ConfigModule.forRoot(), AuthModule, ContractorModule, TendersModule, UserModule, ReviewsModule, ObjectsModule],
   providers: [PrismaService],
 })
 export class AppModule {}
