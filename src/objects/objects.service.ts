@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { IActionsObject } from './dto/object.dto';
+import { DtoCreateReport, IActionsObject } from './dto/object.dto';
 
 @Injectable()
 export class ObjectsService {
@@ -16,7 +16,7 @@ export class ObjectsService {
     const formatted = list.map(user => {
       return {
         id: user.id,
-        fullName: `${user.surname} ${user.name} ${user.patronymic}`,
+        fullName: `${user.surname ?? ''} ${user.name ?? ''} ${user.patronymic ?? ''}`,
       };
     });
 
@@ -147,7 +147,7 @@ export class ObjectsService {
         contractor: {
           select: {
             id: true,
-            legalName: true,
+            name: true,
           },
         },
         user: {
@@ -162,5 +162,59 @@ export class ObjectsService {
     });
 
     return info;
+  }
+
+  async getReportsForStatus(objectId: number, statusId: number) {
+    const reports = await this.prisma.objectsReports.findMany({
+      where: {
+        objectsId: objectId,
+        step: statusId,
+      },
+    });
+
+    return reports;
+  }
+
+  async createReport(objectId: number, statusId: number, dto: DtoCreateReport) {
+    const report = await this.prisma.objectsReports.create({
+      data: {
+        objectsId: objectId,
+        step: statusId,
+        gallery: dto.gallery,
+        title: dto.title,
+        desc: dto.desc,
+        result: dto.result,
+        author: dto.author,
+      },
+    });
+
+    return report;
+  }
+
+  async getListEmployees(contractorId: number) {
+    const listEmployees = await this.prisma.contractorsEmployees.findMany({
+      where: {
+        contractorId: contractorId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            surname: true,
+            patronymic: true,
+          },
+        },
+      },
+    });
+
+    const listUser = listEmployees.map(employee => {
+      return {
+        id: employee.user.id,
+        fullName: `${employee.user?.surname ?? ''} ${employee.user?.name ?? ''} ${employee.user?.patronymic ?? ''}`,
+      };
+    });
+
+    return listUser;
   }
 }

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { ObjectsService } from './objects.service';
 import { Auth } from 'src/auth/decorators/auth.deorator';
-import { IActionsObject } from './dto/object.dto';
+import { DtoCreateReport, IActionsObject } from './dto/object.dto';
 
 @Controller('objects')
 export class ObjectsController {
@@ -11,6 +11,12 @@ export class ObjectsController {
   @Get('list/owner/:id')
   async getObjectListOwner(@Param('id') userId: string) {
     return this.objectsService.getObjectListOwner(userId);
+  }
+
+  @Auth()
+  @Get('list/employees/:id')
+  async getListEmployees(@Param('id') contractorId: number) {
+    return this.objectsService.getListEmployees(+contractorId);
   }
 
   @Auth()
@@ -37,13 +43,31 @@ export class ObjectsController {
     return this.objectsService.editStatusObject(+objectId, +status);
   }
 
+  @Auth()
   @Get('/list')
   async getOwnersList() {
     return this.objectsService.getOwnersList();
   }
 
+  @Auth()
   @Get('/:id/info')
   async getDashboardInfo(@Param('id') objectId: number) {
     return this.objectsService.getInfo(objectId);
+  }
+
+  @Auth()
+  @Get('/reports')
+  async getReportsForStatus(@Query('objectId') objectId: number, @Query('statusId') statusId: number) {
+    return this.objectsService.getReportsForStatus(+objectId, +statusId);
+  }
+
+  @Auth()
+  @Post('/report/:id/create')
+  async createReport(
+    @Param('id') objectId: number,
+    @Query('statusId') statusId: number,
+    @Body() dto: DtoCreateReport,
+  ) {
+    return this.objectsService.createReport(+objectId, +statusId, dto);
   }
 }

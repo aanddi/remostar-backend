@@ -15,4 +15,12 @@ interface IActionsObject {
   desc: string;
 }
 
-export type { IActionsObject };
+interface DtoCreateReport {
+  gallery: string;
+  title: string;
+  desc: string;
+  result: string;
+  author: string;
+}
+
+export type { IActionsObject, DtoCreateReport };

@@ -132,7 +132,7 @@ model ContarctorsPortfolio {
   footage  Int
   budget   Int
   time     String
-  desc     String
+  desc     String  @db.VarChar(5000)
   gallery  String?
   author   String
 
@@ -179,7 +179,7 @@ model Tenders {
   name          String
   budget        Int
   address       String
-  desc          String
+  desc          String  @db.VarChar(5000)
   gallery       String?
   rooms         Int
   type          String
@@ -209,12 +209,12 @@ model Objects {
   floor         String
   finishing     String?
   gallery       String?
-  desc          String
+  desc          String  @db.VarChar(5000)
 
-  user   Users? @relation(fields: [usersId], references: [id])
+  user    Users? @relation(fields: [usersId], references: [id])
   usersId String @map("user_id")
 
-  contractor   Contractors? @relation(fields: [contractorsId], references: [id])
+  contractor    Contractors? @relation(fields: [contractorsId], references: [id])
   contractorsId Int          @map("contractors_id")
 
   files   ObjectsFiles[]
@@ -247,8 +247,9 @@ model ObjectsReports {
   step    Int
   gallery String?
   title   String
-  desc    String
-  result  String
+  desc    String  @db.VarChar(5000)
+  result  String  @db.VarChar(5000)
+  author  String
 
   Objects   Objects @relation(fields: [objectsId], references: [id])
   objectsId Int     @map("objects_id")
