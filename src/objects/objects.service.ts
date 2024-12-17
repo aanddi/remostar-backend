@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { DtoCreateReport, IActionsObject } from './dto/object.dto';
+import * as iconv from 'iconv-lite';
 
 @Injectable()
 export class ObjectsService {
@@ -156,6 +157,8 @@ export class ObjectsService {
             name: true,
             surname: true,
             patronymic: true,
+            phone: true,
+            email : true
           },
         },
       },
@@ -216,5 +219,51 @@ export class ObjectsService {
     });
 
     return listUser;
+  }
+
+  async uploadFile(file: Express.Multer.File, objectId: number) {
+    console.log(file);
+    const newFiles = await this.prisma.objectsFiles.create({
+      data: {
+        name: iconv.decode(Buffer.from(file.originalname, 'binary'), 'utf-8'),
+        size: file.size,
+        blobContent: file.buffer,
+        objectsId: objectId,
+      },
+    });
+
+    return {
+      id: newFiles.id,
+      name: newFiles.name,
+    };
+  }
+
+  async getFileContent(fileId: number) {
+    const content = await this.prisma.objectsFiles.findUnique({
+      where: {
+        id: fileId,
+      },
+    });
+
+    return content.blobContent;
+  }
+
+  async getListFiles(objectId: number) {
+    const list = await this.prisma.objectsFiles.findMany({
+      where: {
+        objectsId: objectId,
+      },
+      select: {
+        id: true,
+        createdAt: true,
+        name: true,
+        size: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return list;
   }
 }

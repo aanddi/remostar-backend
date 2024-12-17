@@ -224,17 +224,15 @@ model Objects {
 }
 
 model ObjectsFiles {
-  id        Int      @id @default(autoincrement()) @map("object_id")
+  id        Int      @id @default(autoincrement()) @map("file_id")
   createdAt DateTime @default(now()) @map("created_at")
-  updateAt  DateTime @updatedAt @map("update_at")
 
   name        String
-  size        String
-  type        String
+  size        Int
   blobContent Bytes  @map("blob_data")
 
   Objects   Objects @relation(fields: [objectsId], references: [id])
-  objectsId Int     @map("objects_id")
+  objectsId Int     @map("object_id")
 
   @@map("objects_files")
 }
@@ -242,7 +240,6 @@ model ObjectsFiles {
 model ObjectsReports {
   id        Int      @id @default(autoincrement()) @map("report_id")
   createdAt DateTime @default(now()) @map("created_at")
-  updateAt  DateTime @updatedAt @map("update_at")
 
   step    Int
   gallery String?

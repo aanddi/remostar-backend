@@ -1,7 +1,21 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ObjectsService } from './objects.service';
 import { Auth } from 'src/auth/decorators/auth.deorator';
 import { DtoCreateReport, IActionsObject } from './dto/object.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Response } from 'express';
 
 @Controller('objects')
 export class ObjectsController {
@@ -63,11 +77,28 @@ export class ObjectsController {
 
   @Auth()
   @Post('/report/:id/create')
-  async createReport(
-    @Param('id') objectId: number,
-    @Query('statusId') statusId: number,
-    @Body() dto: DtoCreateReport,
-  ) {
+  async createReport(@Param('id') objectId: number, @Query('statusId') statusId: number, @Body() dto: DtoCreateReport) {
     return this.objectsService.createReport(+objectId, +statusId, dto);
+  }
+
+  @Auth()
+  @Post('/:id/file/upload')
+  @UseInterceptors(FileInterceptor('multipartFile'))
+  async uploadFile(@Param('id') objectId: number, @UploadedFile() file: Express.Multer.File) {
+    return this.objectsService.uploadFile(file, +objectId);
+  }
+
+  @Auth()
+  @Get('/file/:id/content')
+  async getFileContent(@Param('id') fileId: number, @Res() res: Response) {
+    const fileContent = await this.objectsService.getFileContent(+fileId);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.send(Buffer.from(fileContent));
+  }
+
+  @Auth()
+  @Get('/:id/files/list')
+  async getListFiles(@Param('id') objectId: number) {
+    return this.objectsService.getListFiles(+objectId);
   }
 }
